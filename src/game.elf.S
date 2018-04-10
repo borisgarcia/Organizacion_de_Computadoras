@@ -1,0 +1,743 @@
+
+game.elf:     file format elf32-bigmips
+
+
+Disassembly of section .text:
+
+00400000 <start>:
+  400000:	3c1d7fff 	lui	sp,0x7fff
+  400004:	37bdfffc 	ori	sp,sp,0xfffc
+  400008:	0c1000cf 	jal	40033c <main>
+  40000c:	08100003 	j	40000c <start+0xc>
+
+00400010 <delay_ms>:
+  400010:	3c08ffff 	lui	t0,0xffff
+  400014:	8d090008 	lw	t1,8(t0)
+  400018:	00000000 	nop
+  40001c:	01244820 	add	t1,t1,a0
+
+00400020 <.dm_loop>:
+  400020:	8d0a0008 	lw	t2,8(t0)
+  400024:	00000000 	nop
+  400028:	0149582b 	sltu	t3,t2,t1
+  40002c:	1560fffc 	bnez	t3,400020 <.dm_loop>
+  400030:	00000000 	nop
+  400034:	03e00008 	jr	ra
+  400038:	00000000 	nop
+
+0040003c <keypad_init>:
+  40003c:	3c081001 	lui	t0,0x1001
+  400040:	ad00005c 	sw	zero,92(t0)
+  400044:	03e00008 	jr	ra
+  400048:	00000000 	nop
+
+0040004c <keypad_getkey>:
+  40004c:	3c08ffff 	lui	t0,0xffff
+  400050:	81080004 	lb	t0,4(t0)
+  400054:	24090008 	li	t1,8
+  400058:	240b0001 	li	t3,1
+  40005c:	00005025 	move	t2,zero
+
+00400060 <.gk_loop>:
+  400060:	11490018 	beq	t2,t1,4000c4 <.gk_end_loop>
+  400064:	00000000 	nop
+  400068:	010b6024 	and	t4,t0,t3
+  40006c:	000b5840 	sll	t3,t3,0x1
+  400070:	11800011 	beqz	t4,4000b8 <.gk_inc_loop>
+  400074:	00000000 	nop
+  400078:	3c081001 	lui	t0,0x1001
+  40007c:	8d08005c 	lw	t0,92(t0)
+  400080:	3c09ffff 	lui	t1,0xffff
+  400084:	8d290008 	lw	t1,8(t1)
+  400088:	00000000 	nop
+  40008c:	0128582b 	sltu	t3,t1,t0
+  400090:	11600002 	beqz	t3,40009c <.set_key>
+  400094:	00000000 	nop
+  400098:	00001025 	move	v0,zero
+
+0040009c <.set_key>:
+  40009c:	252900c8 	addiu	t1,t1,200
+  4000a0:	3c081001 	lui	t0,0x1001
+  4000a4:	ad09005c 	sw	t1,92(t0)
+  4000a8:	01401025 	move	v0,t2
+  4000ac:	24420001 	addiu	v0,v0,1
+  4000b0:	03e00008 	jr	ra
+  4000b4:	00000000 	nop
+
+004000b8 <.gk_inc_loop>:
+  4000b8:	254a0001 	addiu	t2,t2,1
+  4000bc:	08100018 	j	400060 <.gk_loop>
+  4000c0:	00000000 	nop
+
+004000c4 <.gk_end_loop>:
+  4000c4:	00001025 	move	v0,zero
+  4000c8:	03e00008 	jr	ra
+  4000cc:	00000000 	nop
+
+004000d0 <set_color>:
+  4000d0:	24880000 	addiu	t0,a0,0
+  4000d4:	00054100 	sll	t0,a1,0x4
+  4000d8:	3089000f 	andi	t1,a0,0xf
+  4000dc:	01094025 	or	t0,t0,t1
+  4000e0:	3c091001 	lui	t1,0x1001
+  4000e4:	a1280060 	sb	t0,96(t1)
+  4000e8:	03e00008 	jr	ra
+  4000ec:	00000000 	nop
+
+004000f0 <get_cursor>:
+  4000f0:	3c091001 	lui	t1,0x1001
+  4000f4:	81280061 	lb	t0,97(t1)
+  4000f8:	00000000 	nop
+  4000fc:	a0880000 	sb	t0,0(a0)
+  400100:	3c091001 	lui	t1,0x1001
+  400104:	81280062 	lb	t0,98(t1)
+  400108:	00000000 	nop
+  40010c:	a0a80000 	sb	t0,0(a1)
+
+00400110 <get_color>:
+  400110:	3c091001 	lui	t1,0x1001
+  400114:	81280060 	lb	t0,96(t1)
+  400118:	00000000 	nop
+  40011c:	3109000f 	andi	t1,t0,0xf
+  400120:	a0890000 	sb	t1,0(a0)
+  400124:	00084902 	srl	t1,t0,0x4
+  400128:	a0a90000 	sb	t1,0(a1)
+  40012c:	03e00008 	jr	ra
+  400130:	00000000 	nop
+
+00400134 <set_cursor>:
+  400134:	2408001d 	li	t0,29
+  400138:	0104402b 	sltu	t0,t0,a0
+  40013c:	15000009 	bnez	t0,400164 <set_cursor_end>
+  400140:	00000000 	nop
+  400144:	2408004f 	li	t0,79
+  400148:	0105402b 	sltu	t0,t0,a1
+  40014c:	15000005 	bnez	t0,400164 <set_cursor_end>
+  400150:	00000000 	nop
+  400154:	3c081001 	lui	t0,0x1001
+  400158:	a1040061 	sb	a0,97(t0)
+  40015c:	3c081001 	lui	t0,0x1001
+  400160:	a1050062 	sb	a1,98(t0)
+
+00400164 <set_cursor_end>:
+  400164:	03e00008 	jr	ra
+  400168:	00000000 	nop
+
+0040016c <put_char>:
+  40016c:	2408000d 	li	t0,13
+  400170:	1504000e 	bne	t0,a0,4001ac <not_eol>
+  400174:	00000000 	nop
+  400178:	3c091001 	lui	t1,0x1001
+  40017c:	91290061 	lbu	t1,97(t1)
+  400180:	00000000 	nop
+  400184:	292a001d 	slti	t2,t1,29
+  400188:	11400004 	beqz	t2,40019c <not_less>
+  40018c:	00000000 	nop
+  400190:	25290001 	addiu	t1,t1,1
+  400194:	3c0a1001 	lui	t2,0x1001
+  400198:	a1490061 	sb	t1,97(t2)
+
+0040019c <not_less>:
+  40019c:	3c0a1001 	lui	t2,0x1001
+  4001a0:	a1400062 	sb	zero,98(t2)
+  4001a4:	0810008e 	j	400238 <put_char_end>
+  4001a8:	00000000 	nop
+
+004001ac <not_eol>:
+  4001ac:	3c081001 	lui	t0,0x1001
+  4001b0:	91090061 	lbu	t1,97(t0)
+  4001b4:	00000000 	nop
+  4001b8:	00095180 	sll	t2,t1,0x6
+  4001bc:	00095900 	sll	t3,t1,0x4
+  4001c0:	014b5021 	addu	t2,t2,t3
+  4001c4:	3c081001 	lui	t0,0x1001
+  4001c8:	81090062 	lb	t1,98(t0)
+  4001cc:	00000000 	nop
+  4001d0:	01495021 	addu	t2,t2,t1
+  4001d4:	000a5040 	sll	t2,t2,0x1
+  4001d8:	3c081001 	lui	t0,0x1001
+  4001dc:	81090060 	lb	t1,96(t0)
+  4001e0:	00000000 	nop
+  4001e4:	00094a00 	sll	t1,t1,0x8
+  4001e8:	00894825 	or	t1,a0,t1
+  4001ec:	3408b800 	li	t0,0xb800
+  4001f0:	01485021 	addu	t2,t2,t0
+  4001f4:	a5490000 	sh	t1,0(t2)
+  4001f8:	3c081001 	lui	t0,0x1001
+  4001fc:	81090062 	lb	t1,98(t0)
+  400200:	00000000 	nop
+  400204:	2d2a004f 	sltiu	t2,t1,79
+  400208:	11400005 	beqz	t2,400220 <not_within_col>
+  40020c:	00000000 	nop
+  400210:	25290001 	addiu	t1,t1,1
+  400214:	a1090062 	sb	t1,98(t0)
+  400218:	0810008e 	j	400238 <put_char_end>
+  40021c:	00000000 	nop
+
+00400220 <not_within_col>:
+  400220:	a1000062 	sb	zero,98(t0)
+  400224:	3c081001 	lui	t0,0x1001
+  400228:	91090061 	lbu	t1,97(t0)
+  40022c:	00000000 	nop
+  400230:	25290001 	addiu	t1,t1,1
+  400234:	a1090061 	sb	t1,97(t0)
+
+00400238 <put_char_end>:
+  400238:	03e00008 	jr	ra
+  40023c:	00000000 	nop
+
+00400240 <mistery>:
+  400240:	3408b800 	li	t0,0xb800
+  400244:	3c091001 	lui	t1,0x1001
+  400248:	25290063 	addiu	t1,t1,99
+
+0040024c <m_loop>:
+  40024c:	812b0000 	lb	t3,0(t1)
+  400250:	00000000 	nop
+  400254:	11600009 	beqz	t3,40027c <m_end>
+  400258:	00000000 	nop
+  40025c:	240a00d0 	li	t2,208
+  400260:	000a5200 	sll	t2,t2,0x8
+  400264:	014b5025 	or	t2,t2,t3
+  400268:	a50a0000 	sh	t2,0(t0)
+  40026c:	250800a0 	addiu	t0,t0,160
+  400270:	25290001 	addiu	t1,t1,1
+  400274:	08100093 	j	40024c <m_loop>
+  400278:	00000000 	nop
+
+0040027c <m_end>:
+  40027c:	03e00008 	jr	ra
+  400280:	00000000 	nop
+
+00400284 <clear_screen>:
+  400284:	3408b800 	li	t0,0xb800
+  400288:	3409cabf 	li	t1,0xcabf
+  40028c:	3c0a1001 	lui	t2,0x1001
+  400290:	914a0060 	lbu	t2,96(t2)
+  400294:	00000000 	nop
+  400298:	000a5200 	sll	t2,t2,0x8
+  40029c:	354a0020 	ori	t2,t2,0x20
+
+004002a0 <.clear_screen_loop>:
+  4002a0:	0109582b 	sltu	t3,t0,t1
+  4002a4:	11600005 	beqz	t3,4002bc <.clear_screen_end>
+  4002a8:	00000000 	nop
+  4002ac:	a50a0000 	sh	t2,0(t0)
+  4002b0:	25080002 	addiu	t0,t0,2
+  4002b4:	081000a8 	j	4002a0 <.clear_screen_loop>
+  4002b8:	00000000 	nop
+
+004002bc <.clear_screen_end>:
+  4002bc:	03e00008 	jr	ra
+  4002c0:	00000000 	nop
+
+004002c4 <puts>:
+  4002c4:	00806025 	move	t4,a0
+  4002c8:	81840000 	lb	a0,0(t4)
+  4002cc:	00000000 	nop
+  4002d0:	1080000c 	beqz	a0,400304 <puts_end>
+  4002d4:	00000000 	nop
+  4002d8:	27bdfffc 	addiu	sp,sp,-4
+  4002dc:	afbf0000 	sw	ra,0(sp)
+
+004002e0 <not_eow>:
+  4002e0:	0c10005b 	jal	40016c <put_char>
+  4002e4:	00000000 	nop
+  4002e8:	258c0001 	addiu	t4,t4,1
+  4002ec:	81840000 	lb	a0,0(t4)
+  4002f0:	00000000 	nop
+  4002f4:	1480fffa 	bnez	a0,4002e0 <not_eow>
+  4002f8:	00000000 	nop
+  4002fc:	8fbf0000 	lw	ra,0(sp)
+  400300:	27bd0004 	addiu	sp,sp,4
+
+00400304 <puts_end>:
+  400304:	03e00008 	jr	ra
+  400308:	00000000 	nop
+
+0040030c <divide>:
+  40030c:	00004825 	move	t1,zero
+
+00400310 <divide_loop>:
+  400310:	0085402b 	sltu	t0,a0,a1
+  400314:	15000005 	bnez	t0,40032c <divide_end>
+  400318:	00000000 	nop
+  40031c:	00852023 	subu	a0,a0,a1
+  400320:	25290001 	addiu	t1,t1,1
+  400324:	081000c4 	j	400310 <divide_loop>
+  400328:	00000000 	nop
+
+0040032c <divide_end>:
+  40032c:	acc90000 	sw	t1,0(a2)
+  400330:	ace40000 	sw	a0,0(a3)
+  400334:	03e00008 	jr	ra
+  400338:	00000000 	nop
+
+0040033c <main>:
+  40033c:	27bdffe8 	addiu	sp,sp,-24
+  400340:	afbf0014 	sw	ra,20(sp)
+  400344:	0c10014e 	jal	400538 <intro>
+  400348:	24070005 	li	a3,5
+  40034c:	24060006 	li	a2,6
+  400350:	24050028 	li	a1,40
+  400354:	2404000f 	li	a0,15
+  400358:	0c1001c2 	jal	400708 <movement>
+  40035c:	1000fffa 	b	400348 <main+0xc>
+
+00400360 <board>:
+  400360:	27bdffe0 	addiu	sp,sp,-32
+  400364:	00002825 	move	a1,zero
+  400368:	2404000f 	li	a0,15
+  40036c:	afb20018 	sw	s2,24(sp)
+  400370:	afb00010 	sw	s0,16(sp)
+  400374:	afbf001c 	sw	ra,28(sp)
+  400378:	afb10014 	sw	s1,20(sp)
+  40037c:	24100001 	li	s0,1
+  400380:	0c100034 	jal	4000d0 <set_color>
+  400384:	2412004f 	li	s2,79
+  400388:	321100ff 	andi	s1,s0,0xff
+  40038c:	02202825 	move	a1,s1
+  400390:	24040003 	li	a0,3
+  400394:	0c10004d 	jal	400134 <set_cursor>
+  400398:	240400ef 	li	a0,239
+  40039c:	0c10005b 	jal	40016c <put_char>
+  4003a0:	02202825 	move	a1,s1
+  4003a4:	2404001d 	li	a0,29
+  4003a8:	0c10004d 	jal	400134 <set_cursor>
+  4003ac:	26100001 	addiu	s0,s0,1
+  4003b0:	240400f4 	li	a0,244
+  4003b4:	0c10005b 	jal	40016c <put_char>
+  4003b8:	1612fff3 	bne	s0,s2,400388 <board+0x28>
+  4003bc:	00008025 	move	s0,zero
+  4003c0:	2412001e 	li	s2,30
+  4003c4:	321100ff 	andi	s1,s0,0xff
+  4003c8:	00002825 	move	a1,zero
+  4003cc:	02202025 	move	a0,s1
+  4003d0:	0c10004d 	jal	400134 <set_cursor>
+  4003d4:	240400ee 	li	a0,238
+  4003d8:	0c10005b 	jal	40016c <put_char>
+  4003dc:	2405004f 	li	a1,79
+  4003e0:	02202025 	move	a0,s1
+  4003e4:	0c10004d 	jal	400134 <set_cursor>
+  4003e8:	26100001 	addiu	s0,s0,1
+  4003ec:	240400f5 	li	a0,245
+  4003f0:	0c10005b 	jal	40016c <put_char>
+  4003f4:	1612fff3 	bne	s0,s2,4003c4 <board+0x64>
+  4003f8:	24050012 	li	a1,18
+  4003fc:	24040001 	li	a0,1
+  400400:	0c10004d 	jal	400134 <set_cursor>
+  400404:	240400fb 	li	a0,251
+  400408:	0c10005b 	jal	40016c <put_char>
+  40040c:	24050014 	li	a1,20
+  400410:	24040001 	li	a0,1
+  400414:	0c10004d 	jal	400134 <set_cursor>
+  400418:	240400fa 	li	a0,250
+  40041c:	0c10005b 	jal	40016c <put_char>
+  400420:	24050016 	li	a1,22
+  400424:	24040001 	li	a0,1
+  400428:	0c10004d 	jal	400134 <set_cursor>
+  40042c:	240400ff 	li	a0,255
+  400430:	0c10005b 	jal	40016c <put_char>
+  400434:	24050018 	li	a1,24
+  400438:	24040001 	li	a0,1
+  40043c:	0c10004d 	jal	400134 <set_cursor>
+  400440:	240400f9 	li	a0,249
+  400444:	0c10005b 	jal	40016c <put_char>
+  400448:	2405001a 	li	a1,26
+  40044c:	24040001 	li	a0,1
+  400450:	0c10004d 	jal	400134 <set_cursor>
+  400454:	240400fc 	li	a0,252
+  400458:	0c10005b 	jal	40016c <put_char>
+  40045c:	2405001e 	li	a1,30
+  400460:	24040001 	li	a0,1
+  400464:	0c10004d 	jal	400134 <set_cursor>
+  400468:	240400fe 	li	a0,254
+  40046c:	0c10005b 	jal	40016c <put_char>
+  400470:	24050020 	li	a1,32
+  400474:	24040001 	li	a0,1
+  400478:	0c10004d 	jal	400134 <set_cursor>
+  40047c:	240400ff 	li	a0,255
+  400480:	0c10005b 	jal	40016c <put_char>
+  400484:	24050022 	li	a1,34
+  400488:	24040001 	li	a0,1
+  40048c:	0c10004d 	jal	400134 <set_cursor>
+  400490:	240400fd 	li	a0,253
+  400494:	0c10005b 	jal	40016c <put_char>
+  400498:	24050024 	li	a1,36
+  40049c:	24040001 	li	a0,1
+  4004a0:	0c10004d 	jal	400134 <set_cursor>
+  4004a4:	240400fc 	li	a0,252
+  4004a8:	0c10005b 	jal	40016c <put_char>
+  4004ac:	24050032 	li	a1,50
+  4004b0:	24040001 	li	a0,1
+  4004b4:	0c10004d 	jal	400134 <set_cursor>
+  4004b8:	240400fb 	li	a0,251
+  4004bc:	0c10005b 	jal	40016c <put_char>
+  4004c0:	24050034 	li	a1,52
+  4004c4:	24040001 	li	a0,1
+  4004c8:	0c10004d 	jal	400134 <set_cursor>
+  4004cc:	240400f7 	li	a0,247
+  4004d0:	0c10005b 	jal	40016c <put_char>
+  4004d4:	24050036 	li	a1,54
+  4004d8:	24040001 	li	a0,1
+  4004dc:	0c10004d 	jal	400134 <set_cursor>
+  4004e0:	240400f3 	li	a0,243
+  4004e4:	0c10005b 	jal	40016c <put_char>
+  4004e8:	24050038 	li	a1,56
+  4004ec:	24040001 	li	a0,1
+  4004f0:	0c10004d 	jal	400134 <set_cursor>
+  4004f4:	240400f6 	li	a0,246
+  4004f8:	0c10005b 	jal	40016c <put_char>
+  4004fc:	2405003a 	li	a1,58
+  400500:	24040001 	li	a0,1
+  400504:	0c10004d 	jal	400134 <set_cursor>
+  400508:	240400fc 	li	a0,252
+  40050c:	0c10005b 	jal	40016c <put_char>
+  400510:	24040001 	li	a0,1
+  400514:	2405003c 	li	a1,60
+  400518:	0c10004d 	jal	400134 <set_cursor>
+  40051c:	8fbf001c 	lw	ra,28(sp)
+  400520:	8fb20018 	lw	s2,24(sp)
+  400524:	8fb10014 	lw	s1,20(sp)
+  400528:	8fb00010 	lw	s0,16(sp)
+  40052c:	240400ed 	li	a0,237
+  400530:	27bd0020 	addiu	sp,sp,32
+  400534:	0810005b 	j	40016c <put_char>
+
+00400538 <intro>:
+  400538:	27bdffd8 	addiu	sp,sp,-40
+  40053c:	24050003 	li	a1,3
+  400540:	2404000f 	li	a0,15
+  400544:	afb10018 	sw	s1,24(sp)
+  400548:	afb00014 	sw	s0,20(sp)
+  40054c:	3c111001 	lui	s1,0x1001
+  400550:	3c101001 	lui	s0,0x1001
+  400554:	afbf0024 	sw	ra,36(sp)
+  400558:	afb2001c 	sw	s2,28(sp)
+  40055c:	afb30020 	sw	s3,32(sp)
+  400560:	26310000 	addiu	s1,s1,0
+  400564:	0c100034 	jal	4000d0 <set_color>
+  400568:	26100018 	addiu	s0,s0,24
+  40056c:	0c1000a1 	jal	400284 <clear_screen>
+  400570:	24120008 	li	s2,8
+  400574:	0c10000f 	jal	40003c <keypad_init>
+  400578:	0c100013 	jal	40004c <keypad_getkey>
+  40057c:	2405001d 	li	a1,29
+  400580:	2404000e 	li	a0,14
+  400584:	00409825 	move	s3,v0
+  400588:	0c10004d 	jal	400134 <set_cursor>
+  40058c:	02202025 	move	a0,s1
+  400590:	0c1000b1 	jal	4002c4 <puts>
+  400594:	24040010 	li	a0,16
+  400598:	2405001c 	li	a1,28
+  40059c:	0c10004d 	jal	400134 <set_cursor>
+  4005a0:	02002025 	move	a0,s0
+  4005a4:	0c1000b1 	jal	4002c4 <puts>
+  4005a8:	1672fff3 	bne	s3,s2,400578 <intro+0x40>
+  4005ac:	00002825 	move	a1,zero
+  4005b0:	2404000f 	li	a0,15
+  4005b4:	0c100034 	jal	4000d0 <set_color>
+  4005b8:	0c1000a1 	jal	400284 <clear_screen>
+  4005bc:	8fbf0024 	lw	ra,36(sp)
+  4005c0:	8fb30020 	lw	s3,32(sp)
+  4005c4:	8fb2001c 	lw	s2,28(sp)
+  4005c8:	8fb10018 	lw	s1,24(sp)
+  4005cc:	8fb00014 	lw	s0,20(sp)
+  4005d0:	27bd0028 	addiu	sp,sp,40
+  4005d4:	081000d8 	j	400360 <board>
+
+004005d8 <drawSnake>:
+  4005d8:	27bdffe8 	addiu	sp,sp,-24
+  4005dc:	afbf0014 	sw	ra,20(sp)
+  4005e0:	0c10004d 	jal	400134 <set_cursor>
+  4005e4:	8fbf0014 	lw	ra,20(sp)
+  4005e8:	240400e5 	li	a0,229
+  4005ec:	27bd0018 	addiu	sp,sp,24
+  4005f0:	0810005b 	j	40016c <put_char>
+
+004005f4 <drawFood>:
+  4005f4:	27bdffe8 	addiu	sp,sp,-24
+  4005f8:	afbf0014 	sw	ra,20(sp)
+  4005fc:	0c10004d 	jal	400134 <set_cursor>
+  400600:	8fbf0014 	lw	ra,20(sp)
+  400604:	240400f8 	li	a0,248
+  400608:	27bd0018 	addiu	sp,sp,24
+  40060c:	0810005b 	j	40016c <put_char>
+
+00400610 <randCols>:
+  400610:	000410c0 	sll	v0,a0,0x3
+  400614:	24420002 	addiu	v0,v0,2
+  400618:	304200ff 	andi	v0,v0,0xff
+  40061c:	2c43004f 	sltiu	v1,v0,79
+  400620:	10600001 	beqz	v1,400628 <randCols+0x18>
+  400624:	03e00008 	jr	ra
+  400628:	2442ffb2 	addiu	v0,v0,-78
+  40062c:	1000fffa 	b	400618 <randCols+0x8>
+
+00400630 <randRows>:
+  400630:	000410c0 	sll	v0,a0,0x3
+  400634:	24420002 	addiu	v0,v0,2
+  400638:	304200ff 	andi	v0,v0,0xff
+  40063c:	2c43001d 	sltiu	v1,v0,29
+  400640:	10600001 	beqz	v1,400648 <randRows+0x18>
+  400644:	03e00008 	jr	ra
+  400648:	2442ffe4 	addiu	v0,v0,-28
+  40064c:	1000fffa 	b	400638 <randRows+0x8>
+
+00400650 <_mod>:
+  400650:	00801025 	move	v0,a0
+  400654:	00a2182a 	slt	v1,a1,v0
+  400658:	14600001 	bnez	v1,400660 <_mod+0x10>
+  40065c:	03e00008 	jr	ra
+  400660:	00451023 	subu	v0,v0,a1
+  400664:	304200ff 	andi	v0,v0,0xff
+  400668:	1000fffa 	b	400654 <_mod+0x4>
+
+0040066c <GameOver>:
+  40066c:	27bdffd8 	addiu	sp,sp,-40
+  400670:	24050009 	li	a1,9
+  400674:	2404000f 	li	a0,15
+  400678:	afbf0024 	sw	ra,36(sp)
+  40067c:	afb2001c 	sw	s2,28(sp)
+  400680:	afb10018 	sw	s1,24(sp)
+  400684:	afb00014 	sw	s0,20(sp)
+  400688:	afb30020 	sw	s3,32(sp)
+  40068c:	3c111001 	lui	s1,0x1001
+  400690:	0c100034 	jal	4000d0 <set_color>
+  400694:	3c101001 	lui	s0,0x1001
+  400698:	24050005 	li	a1,5
+  40069c:	2404000f 	li	a0,15
+  4006a0:	0c100176 	jal	4005d8 <drawSnake>
+  4006a4:	26310034 	addiu	s1,s1,52
+  4006a8:	0c1000a1 	jal	400284 <clear_screen>
+  4006ac:	26100040 	addiu	s0,s0,64
+  4006b0:	0c10000f 	jal	40003c <keypad_init>
+  4006b4:	24120008 	li	s2,8
+  4006b8:	0c100013 	jal	40004c <keypad_getkey>
+  4006bc:	24050023 	li	a1,35
+  4006c0:	2404000e 	li	a0,14
+  4006c4:	00409825 	move	s3,v0
+  4006c8:	0c10004d 	jal	400134 <set_cursor>
+  4006cc:	02202025 	move	a0,s1
+  4006d0:	0c1000b1 	jal	4002c4 <puts>
+  4006d4:	24040010 	li	a0,16
+  4006d8:	2405001a 	li	a1,26
+  4006dc:	0c10004d 	jal	400134 <set_cursor>
+  4006e0:	02002025 	move	a0,s0
+  4006e4:	0c1000b1 	jal	4002c4 <puts>
+  4006e8:	1672fff3 	bne	s3,s2,4006b8 <GameOver+0x4c>
+  4006ec:	8fbf0024 	lw	ra,36(sp)
+  4006f0:	8fb30020 	lw	s3,32(sp)
+  4006f4:	8fb2001c 	lw	s2,28(sp)
+  4006f8:	8fb10018 	lw	s1,24(sp)
+  4006fc:	8fb00014 	lw	s0,20(sp)
+  400700:	27bd0028 	addiu	sp,sp,40
+  400704:	0810014e 	j	400538 <intro>
+
+00400708 <movement>:
+  400708:	27bdffb8 	addiu	sp,sp,-72
+  40070c:	afb10024 	sw	s1,36(sp)
+  400710:	afb00020 	sw	s0,32(sp)
+  400714:	00a08825 	move	s1,a1
+  400718:	00808025 	move	s0,a0
+  40071c:	00002825 	move	a1,zero
+  400720:	2404000f 	li	a0,15
+  400724:	afbf0044 	sw	ra,68(sp)
+  400728:	afbe0040 	sw	s8,64(sp)
+  40072c:	afb7003c 	sw	s7,60(sp)
+  400730:	00e0f025 	move	s8,a3
+  400734:	afb60038 	sw	s6,56(sp)
+  400738:	afb50034 	sw	s5,52(sp)
+  40073c:	afb40030 	sw	s4,48(sp)
+  400740:	00c0a825 	move	s5,a2
+  400744:	afb3002c 	sw	s3,44(sp)
+  400748:	afb20028 	sw	s2,40(sp)
+  40074c:	24160030 	li	s6,48
+  400750:	0c100034 	jal	4000d0 <set_color>
+  400754:	0000a025 	move	s4,zero
+  400758:	0c10000f 	jal	40003c <keypad_init>
+  40075c:	24130064 	li	s3,100
+  400760:	0c100013 	jal	40004c <keypad_getkey>
+  400764:	24120055 	li	s2,85
+  400768:	2417ffff 	li	s7,-1
+  40076c:	0c100013 	jal	40004c <keypad_getkey>
+  400770:	10400001 	beqz	v0,400778 <movement+0x70>
+  400774:	0040b825 	move	s7,v0
+  400778:	24020001 	li	v0,1
+  40077c:	16e20037 	bne	s7,v0,40085c <movement+0x154>
+  400780:	2622fffe 	addiu	v0,s1,-2
+  400784:	2c42004d 	sltiu	v0,v0,77
+  400788:	10400004 	beqz	v0,40079c <movement+0x94>
+  40078c:	02402025 	move	a0,s2
+  400790:	0c100004 	jal	400010 <delay_ms>
+  400794:	2631ffff 	addiu	s1,s1,-1
+  400798:	323100ff 	andi	s1,s1,0xff
+  40079c:	2402001c 	li	v0,28
+  4007a0:	1602004a 	bne	s0,v0,4008cc <movement+0x1c4>
+  4007a4:	0c10019b 	jal	40066c <GameOver>
+  4007a8:	24160030 	li	s6,48
+  4007ac:	0000a025 	move	s4,zero
+  4007b0:	24130064 	li	s3,100
+  4007b4:	24120055 	li	s2,85
+  4007b8:	24110028 	li	s1,40
+  4007bc:	2410000f 	li	s0,15
+  4007c0:	16150002 	bne	s0,s5,4007cc <movement+0xc4>
+  4007c4:	02002025 	move	a0,s0
+  4007c8:	123e0048 	beq	s1,s8,4008ec <movement+0x1e4>
+  4007cc:	00002825 	move	a1,zero
+  4007d0:	00002025 	move	a0,zero
+  4007d4:	0c100034 	jal	4000d0 <set_color>
+  4007d8:	24020004 	li	v0,4
+  4007dc:	2407001d 	li	a3,29
+  4007e0:	24030002 	li	v1,2
+  4007e4:	304600ff 	andi	a2,v0,0xff
+  4007e8:	00c02025 	move	a0,a2
+  4007ec:	306500ff 	andi	a1,v1,0xff
+  4007f0:	afa7001c 	sw	a3,28(sp)
+  4007f4:	afa20018 	sw	v0,24(sp)
+  4007f8:	afa30014 	sw	v1,20(sp)
+  4007fc:	afa60010 	sw	a2,16(sp)
+  400800:	0c10004d 	jal	400134 <set_cursor>
+  400804:	24040020 	li	a0,32
+  400808:	0c10005b 	jal	40016c <put_char>
+  40080c:	8fa30014 	lw	v1,20(sp)
+  400810:	2404004e 	li	a0,78
+  400814:	24630001 	addiu	v1,v1,1
+  400818:	8fa60010 	lw	a2,16(sp)
+  40081c:	8fa20018 	lw	v0,24(sp)
+  400820:	8fa7001c 	lw	a3,28(sp)
+  400824:	1464fff0 	bne	v1,a0,4007e8 <movement+0xe0>
+  400828:	24420001 	addiu	v0,v0,1
+  40082c:	1447ffec 	bne	v0,a3,4007e0 <movement+0xd8>
+  400830:	00002825 	move	a1,zero
+  400834:	2404000f 	li	a0,15
+  400838:	0c100034 	jal	4000d0 <set_color>
+  40083c:	02202825 	move	a1,s1
+  400840:	02002025 	move	a0,s0
+  400844:	0c100176 	jal	4005d8 <drawSnake>
+  400848:	03c02825 	move	a1,s8
+  40084c:	02a02025 	move	a0,s5
+  400850:	0c10017d 	jal	4005f4 <drawFood>
+  400854:	0c1000d8 	jal	400360 <board>
+  400858:	1000ffc4 	b	40076c <movement+0x64>
+  40085c:	24020002 	li	v0,2
+  400860:	16e20007 	bne	s7,v0,400880 <movement+0x178>
+  400864:	2622ffff 	addiu	v0,s1,-1
+  400868:	2c42004d 	sltiu	v0,v0,77
+  40086c:	1040ffcb 	beqz	v0,40079c <movement+0x94>
+  400870:	02402025 	move	a0,s2
+  400874:	0c100004 	jal	400010 <delay_ms>
+  400878:	26310001 	addiu	s1,s1,1
+  40087c:	1000ffc6 	b	400798 <movement+0x90>
+  400880:	24020003 	li	v0,3
+  400884:	16e20008 	bne	s7,v0,4008a8 <movement+0x1a0>
+  400888:	2602fffd 	addiu	v0,s0,-3
+  40088c:	2c420019 	sltiu	v0,v0,25
+  400890:	1040ffc2 	beqz	v0,40079c <movement+0x94>
+  400894:	02602025 	move	a0,s3
+  400898:	26100001 	addiu	s0,s0,1
+  40089c:	0c100004 	jal	400010 <delay_ms>
+  4008a0:	321000ff 	andi	s0,s0,0xff
+  4008a4:	1000ffbd 	b	40079c <movement+0x94>
+  4008a8:	24020004 	li	v0,4
+  4008ac:	16e2ffbb 	bne	s7,v0,40079c <movement+0x94>
+  4008b0:	2602fffc 	addiu	v0,s0,-4
+  4008b4:	2c420019 	sltiu	v0,v0,25
+  4008b8:	10400004 	beqz	v0,4008cc <movement+0x1c4>
+  4008bc:	02602025 	move	a0,s3
+  4008c0:	2610ffff 	addiu	s0,s0,-1
+  4008c4:	0c100004 	jal	400010 <delay_ms>
+  4008c8:	321000ff 	andi	s0,s0,0xff
+  4008cc:	24020003 	li	v0,3
+  4008d0:	1202ffb4 	beq	s0,v0,4007a4 <movement+0x9c>
+  4008d4:	24020001 	li	v0,1
+  4008d8:	1222ffb2 	beq	s1,v0,4007a4 <movement+0x9c>
+  4008dc:	2402004e 	li	v0,78
+  4008e0:	1622ffb7 	bne	s1,v0,4007c0 <movement+0xb8>
+  4008e4:	1000ffaf 	b	4007a4 <movement+0x9c>
+  4008e8:	02a02025 	move	a0,s5
+  4008ec:	0c10018c 	jal	400630 <randRows>
+  4008f0:	0040a825 	move	s5,v0
+  4008f4:	2c420005 	sltiu	v0,v0,5
+  4008f8:	1440fffb 	bnez	v0,4008e8 <movement+0x1e0>
+  4008fc:	03c02025 	move	a0,s8
+  400900:	0c100184 	jal	400610 <randCols>
+  400904:	26940001 	addiu	s4,s4,1
+  400908:	0040f025 	move	s8,v0
+  40090c:	2652ffff 	addiu	s2,s2,-1
+  400910:	2673ffff 	addiu	s3,s3,-1
+  400914:	329400ff 	andi	s4,s4,0xff
+  400918:	24020005 	li	v0,5
+  40091c:	325200ff 	andi	s2,s2,0xff
+  400920:	327300ff 	andi	s3,s3,0xff
+  400924:	16820003 	bne	s4,v0,400934 <movement+0x22c>
+  400928:	26d60001 	addiu	s6,s6,1
+  40092c:	32d600ff 	andi	s6,s6,0xff
+  400930:	24140001 	li	s4,1
+  400934:	00002825 	move	a1,zero
+  400938:	2404000f 	li	a0,15
+  40093c:	0c100034 	jal	4000d0 <set_color>
+  400940:	2405003e 	li	a1,62
+  400944:	24040001 	li	a0,1
+  400948:	0c10004d 	jal	400134 <set_cursor>
+  40094c:	02c02025 	move	a0,s6
+  400950:	0c10005b 	jal	40016c <put_char>
+  400954:	00002825 	move	a1,zero
+  400958:	00002025 	move	a0,zero
+  40095c:	0c100034 	jal	4000d0 <set_color>
+  400960:	1000ff9a 	b	4007cc <movement+0xc4>
+
+Disassembly of section .data:
+
+10010000 <next_key_time-0x5c>:
+10010000:	57454c43 	0x57454c43
+10010004:	4f4d4520 	c3	0x14d4520
+10010008:	544f2053 	0x544f2053
+1001000c:	4e414b45 	c3	0x414b45
+10010010:	2047414d 	addi	a3,v0,16717
+10010014:	45210000 	0x45210000
+10010018:	50524553 	0x50524553
+1001001c:	53205350 	0x53205350
+10010020:	41434520 	0x41434520
+10010024:	544f2043 	0x544f2043
+10010028:	4f4e5449 	c3	0x14e5449
+1001002c:	4e554521 	c3	0x554521
+10010030:	00000000 	nop
+10010034:	47616d65 	c1	0x1616d65
+10010038:	204f7665 	addi	t7,v0,30309
+1001003c:	72210000 	0x72210000
+10010040:	50524553 	0x50524553
+10010044:	53205350 	0x53205350
+10010048:	41434520 	0x41434520
+1001004c:	544f2053 	0x544f2053
+10010050:	74617274 	jalx	1185c9d0 <text+0x184c96d>
+10010054:	20416761 	addi	at,v0,26465
+10010058:	696e2100 	0x696e2100
+
+1001005c <next_key_time>:
+1001005c:	00000000 	nop
+
+10010060 <chr_attr>:
+	...
+
+10010061 <cursor_row>:
+	...
+
+10010062 <cursor_col>:
+	...
+
+10010063 <text>:
+10010063:	4764      	addiu	v1,a3,4
+10010065:	6b6b      	li	v1,107
+10010067:	6e77      	li	a2,119
+10010069:	566e      	slti	a2,110
+1001006b:	716b      	cmpi	s1,107
+1001006d:	6300      	addiu	sp,0
+
+Disassembly of section .gnu.attributes:
+
+00000000 <.gnu.attributes>:
+   0:	41000000 	bc0f	4 <_gp+0x4>
+   4:	0f676e75 	jal	d9db9d4 <movement+0xd5db2cc>
+   8:	00010000 	sll	zero,at,0x0
+   c:	00070401 	0x70401
